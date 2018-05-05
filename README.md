@@ -11,9 +11,7 @@ import numpy as np
 from scipy.stats import linregress
 import requests
 
-import gmaps
-import gmaps.geojson_geometries
-import gmaps.datasets
+
 import plotly.plotly as py
 import plotly.graph_objs as go
 
@@ -917,30 +915,6 @@ plt.savefig("GunViolenceDeathsperYear.png")
 
 
 ![png](output_14_0.png)
-
-
-
-```python
-gmaps.geojson_geometries.list_geometries()
-```
-
-
-
-
-    dict_keys(['countries', 'countries-high-resolution', 'england-counties', 'us-states', 'us-counties', 'india-states', 'brazil-states'])
-
-
-
-
-```python
-gmaps.datasets.list_datasets()
-```
-
-
-
-
-    dict_keys(['taxi_rides', 'earthquakes', 'acled_africa', 'acled_africa_by_year', 'london_congestion_zone', 'nuclear_plants', 'starbucks_kfc_uk', 'gini'])
-
 
 
 
@@ -3168,26 +3142,7 @@ gun_file_df
 
 
 ```python
-gun_violence_dfgun_viole ["year"] = pd.DatetimeIndex(gun_file_df["date"]).year
-gun_violence_df.head()
-```
-
-
-```python
-gun_violence_df["month"] = pd.DatetimeIndex(gun_violence_df["date"]).month
-gun_violence_df
-```
-
-
-```python
-#Keep all data except the ones referent to the 2013 year, since this year has incomplete information. Then, reset index.#Keep all 
-gun_violence_df = gun_violence_df[gun_violence_df.year != 2013]
-gun_violence_df.head()
-```
-
-
-```python
-gun_file_df  = gun_file_df.reset_index(drop=True)
+gun_file_df["year"] = pd.DatetimeIndex(gun_file_df["date"]).year
 gun_file_df.head()
 ```
 
@@ -3365,6 +3320,541 @@ gun_file_df.head()
 
 
 ```python
+gun_file_df["month"] = pd.DatetimeIndex(gun_file_df["date"]).month
+gun_file_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>incident_id</th>
+      <th>date</th>
+      <th>state</th>
+      <th>city_or_county</th>
+      <th>address</th>
+      <th>n_killed</th>
+      <th>n_injured</th>
+      <th>incident_url</th>
+      <th>source_url</th>
+      <th>incident_url_fields_missing</th>
+      <th>...</th>
+      <th>participant_gender</th>
+      <th>participant_name</th>
+      <th>participant_relationship</th>
+      <th>participant_status</th>
+      <th>participant_type</th>
+      <th>sources</th>
+      <th>state_house_district</th>
+      <th>state_senate_district</th>
+      <th>year</th>
+      <th>month</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>461105</td>
+      <td>1/1/13</td>
+      <td>Pennsylvania</td>
+      <td>Mckeesport</td>
+      <td>1506 Versailles Avenue and Coursin Street</td>
+      <td>0</td>
+      <td>4</td>
+      <td>http://www.gunviolencearchive.org/incident/461105</td>
+      <td>http://www.post-gazette.com/local/south/2013/0...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male||3::Male||4::Female</td>
+      <td>0::Julian Sims</td>
+      <td>NaN</td>
+      <td>0::Arrested||1::Injured||2::Injured||3::Injure...</td>
+      <td>0::Victim||1::Victim||2::Victim||3::Victim||4:...</td>
+      <td>http://pittsburgh.cbslocal.com/2013/01/01/4-pe...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2013</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>460726</td>
+      <td>1/1/13</td>
+      <td>California</td>
+      <td>Hawthorne</td>
+      <td>13500 block of Cerise Avenue</td>
+      <td>1</td>
+      <td>3</td>
+      <td>http://www.gunviolencearchive.org/incident/460726</td>
+      <td>http://www.dailybulletin.com/article/zz/201301...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male</td>
+      <td>0::Bernard Gillis</td>
+      <td>NaN</td>
+      <td>0::Killed||1::Injured||2::Injured||3::Injured</td>
+      <td>0::Victim||1::Victim||2::Victim||3::Victim||4:...</td>
+      <td>http://losangeles.cbslocal.com/2013/01/01/man-...</td>
+      <td>62.0</td>
+      <td>35.0</td>
+      <td>2013</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>478855</td>
+      <td>1/1/13</td>
+      <td>Ohio</td>
+      <td>Lorain</td>
+      <td>1776 East 28th Street</td>
+      <td>1</td>
+      <td>3</td>
+      <td>http://www.gunviolencearchive.org/incident/478855</td>
+      <td>http://chronicle.northcoastnow.com/2013/02/14/...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male||2::Male||3::Male||4::Male</td>
+      <td>0::Damien Bell||1::Desmen Noble||2::Herman Sea...</td>
+      <td>NaN</td>
+      <td>0::Injured, Unharmed, Arrested||1::Unharmed, A...</td>
+      <td>0::Subject-Suspect||1::Subject-Suspect||2::Vic...</td>
+      <td>http://www.morningjournal.com/general-news/201...</td>
+      <td>56.0</td>
+      <td>13.0</td>
+      <td>2013</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>478925</td>
+      <td>1/5/13</td>
+      <td>Colorado</td>
+      <td>Aurora</td>
+      <td>16000 block of East Ithaca Place</td>
+      <td>4</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/478925</td>
+      <td>http://www.dailydemocrat.com/20130106/aurora-s...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female||1::Male||2::Male||3::Male</td>
+      <td>0::Stacie Philbrook||1::Christopher Ratliffe||...</td>
+      <td>NaN</td>
+      <td>0::Killed||1::Killed||2::Killed||3::Killed</td>
+      <td>0::Victim||1::Victim||2::Victim||3::Subject-Su...</td>
+      <td>http://denver.cbslocal.com/2013/01/06/officer-...</td>
+      <td>40.0</td>
+      <td>28.0</td>
+      <td>2013</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>478959</td>
+      <td>1/7/13</td>
+      <td>North Carolina</td>
+      <td>Greensboro</td>
+      <td>307 Mourning Dove Terrace</td>
+      <td>2</td>
+      <td>2</td>
+      <td>http://www.gunviolencearchive.org/incident/478959</td>
+      <td>http://www.journalnow.com/news/local/article_d...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female||1::Male||2::Male||3::Female</td>
+      <td>0::Danielle Imani Jameison||1::Maurice Eugene ...</td>
+      <td>3::Family</td>
+      <td>0::Injured||1::Injured||2::Killed||3::Killed</td>
+      <td>0::Victim||1::Victim||2::Victim||3::Subject-Su...</td>
+      <td>http://myfox8.com/2013/01/08/update-mother-sho...</td>
+      <td>62.0</td>
+      <td>27.0</td>
+      <td>2013</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 31 columns</p>
+</div>
+
+
+
+
+```python
+#Keep all data except the ones referent to the 2013 year, since this year has incomplete information. Then, reset index.#Keep all 
+gun_file_df = gun_file_df[gun_file_df.year != 2013]
+gun_file_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>incident_id</th>
+      <th>date</th>
+      <th>state</th>
+      <th>city_or_county</th>
+      <th>address</th>
+      <th>n_killed</th>
+      <th>n_injured</th>
+      <th>incident_url</th>
+      <th>source_url</th>
+      <th>incident_url_fields_missing</th>
+      <th>...</th>
+      <th>participant_gender</th>
+      <th>participant_name</th>
+      <th>participant_relationship</th>
+      <th>participant_status</th>
+      <th>participant_type</th>
+      <th>sources</th>
+      <th>state_house_district</th>
+      <th>state_senate_district</th>
+      <th>year</th>
+      <th>month</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>278</th>
+      <td>95289</td>
+      <td>1/1/14</td>
+      <td>Michigan</td>
+      <td>Muskegon</td>
+      <td>300 block of Monroe Avenue</td>
+      <td>0</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/95289</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Unharmed</td>
+      <td>0::Victim</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
+      <td>92.0</td>
+      <td>34.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>279</th>
+      <td>92401</td>
+      <td>1/1/14</td>
+      <td>New Jersey</td>
+      <td>Newark</td>
+      <td>Central Avenue</td>
+      <td>0</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92401</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
+      <td>29.0</td>
+      <td>29.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>280</th>
+      <td>92383</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Queens</td>
+      <td>113th Avenue</td>
+      <td>1</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92383</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male</td>
+      <td>0::Julio Mora||1::Sheldon Smith</td>
+      <td>NaN</td>
+      <td>0::Killed||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
+      <td>33.0</td>
+      <td>14.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>281</th>
+      <td>92142</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Brooklyn</td>
+      <td>St. Johns Place</td>
+      <td>0</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/92142</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Injured</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
+      <td>43.0</td>
+      <td>20.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>282</th>
+      <td>95261</td>
+      <td>1/1/14</td>
+      <td>Missouri</td>
+      <td>Springfield</td>
+      <td>Beverly Hills and Temple</td>
+      <td>0</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/95261</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Injured||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
+      <td>131.0</td>
+      <td>30.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 31 columns</p>
+</div>
+
+
+
+
+```python
+gun_file_df  = gun_file_df.reset_index(drop=True)
+gun_file_df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>incident_id</th>
+      <th>date</th>
+      <th>state</th>
+      <th>city_or_county</th>
+      <th>address</th>
+      <th>n_killed</th>
+      <th>n_injured</th>
+      <th>incident_url</th>
+      <th>source_url</th>
+      <th>incident_url_fields_missing</th>
+      <th>...</th>
+      <th>participant_gender</th>
+      <th>participant_name</th>
+      <th>participant_relationship</th>
+      <th>participant_status</th>
+      <th>participant_type</th>
+      <th>sources</th>
+      <th>state_house_district</th>
+      <th>state_senate_district</th>
+      <th>year</th>
+      <th>month</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>95289</td>
+      <td>1/1/14</td>
+      <td>Michigan</td>
+      <td>Muskegon</td>
+      <td>300 block of Monroe Avenue</td>
+      <td>0</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/95289</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Unharmed</td>
+      <td>0::Victim</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
+      <td>92.0</td>
+      <td>34.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>92401</td>
+      <td>1/1/14</td>
+      <td>New Jersey</td>
+      <td>Newark</td>
+      <td>Central Avenue</td>
+      <td>0</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92401</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
+      <td>29.0</td>
+      <td>29.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>92383</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Queens</td>
+      <td>113th Avenue</td>
+      <td>1</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92383</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male</td>
+      <td>0::Julio Mora||1::Sheldon Smith</td>
+      <td>NaN</td>
+      <td>0::Killed||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
+      <td>33.0</td>
+      <td>14.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>92142</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Brooklyn</td>
+      <td>St. Johns Place</td>
+      <td>0</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/92142</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Male||1::Male</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Injured</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
+      <td>43.0</td>
+      <td>20.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>95261</td>
+      <td>1/1/14</td>
+      <td>Missouri</td>
+      <td>Springfield</td>
+      <td>Beverly Hills and Temple</td>
+      <td>0</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/95261</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0::Female</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Injured||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
+      <td>131.0</td>
+      <td>30.0</td>
+      <td>2014</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 31 columns</p>
+</div>
+
+
+
+
+```python
 gun_file_df.columns
 ```
 
@@ -3392,7 +3882,7 @@ len(gun_file_df)
 
 
 
-    239677
+    239399
 
 
 
@@ -3404,7 +3894,7 @@ len(gun_file_df['month'])
 
 
 
-    239677
+    239399
 
 
 
@@ -3488,121 +3978,121 @@ gun_file_df.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>461105</td>
-      <td>1/1/13</td>
-      <td>Pennsylvania</td>
-      <td>Mckeesport</td>
-      <td>1506 Versailles Avenue and Coursin Street</td>
+      <td>95289</td>
+      <td>1/1/14</td>
+      <td>Michigan</td>
+      <td>Muskegon</td>
+      <td>300 block of Monroe Avenue</td>
       <td>0</td>
-      <td>4</td>
-      <td>http://www.gunviolencearchive.org/incident/461105</td>
-      <td>http://www.post-gazette.com/local/south/2013/0...</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/95289</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
       <td>False</td>
       <td>...</td>
-      <td>0::Julian Sims</td>
-      <td>NaN</td>
-      <td>0::Arrested||1::Injured||2::Injured||3::Injure...</td>
-      <td>0::Victim||1::Victim||2::Victim||3::Victim||4:...</td>
-      <td>http://pittsburgh.cbslocal.com/2013/01/01/4-pe...</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>2013</td>
+      <td>0::Unharmed</td>
+      <td>0::Victim</td>
+      <td>http://www.mlive.com/news/muskegon/index.ssf/2...</td>
+      <td>92.0</td>
+      <td>34.0</td>
+      <td>2014</td>
       <td>1</td>
       <td>winter</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>460726</td>
-      <td>1/1/13</td>
-      <td>California</td>
-      <td>Hawthorne</td>
-      <td>13500 block of Cerise Avenue</td>
-      <td>1</td>
-      <td>3</td>
-      <td>http://www.gunviolencearchive.org/incident/460726</td>
-      <td>http://www.dailybulletin.com/article/zz/201301...</td>
+      <td>92401</td>
+      <td>1/1/14</td>
+      <td>New Jersey</td>
+      <td>Newark</td>
+      <td>Central Avenue</td>
+      <td>0</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92401</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
       <td>False</td>
       <td>...</td>
-      <td>0::Bernard Gillis</td>
       <td>NaN</td>
-      <td>0::Killed||1::Injured||2::Injured||3::Injured</td>
-      <td>0::Victim||1::Victim||2::Victim||3::Victim||4:...</td>
-      <td>http://losangeles.cbslocal.com/2013/01/01/man-...</td>
-      <td>62.0</td>
-      <td>35.0</td>
-      <td>2013</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>http://www.nj.com/essex/index.ssf/2014/01/newa...</td>
+      <td>29.0</td>
+      <td>29.0</td>
+      <td>2014</td>
       <td>1</td>
       <td>winter</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>478855</td>
-      <td>1/1/13</td>
-      <td>Ohio</td>
-      <td>Lorain</td>
-      <td>1776 East 28th Street</td>
+      <td>92383</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Queens</td>
+      <td>113th Avenue</td>
       <td>1</td>
-      <td>3</td>
-      <td>http://www.gunviolencearchive.org/incident/478855</td>
-      <td>http://chronicle.northcoastnow.com/2013/02/14/...</td>
+      <td>0</td>
+      <td>http://www.gunviolencearchive.org/incident/92383</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
       <td>False</td>
       <td>...</td>
-      <td>0::Damien Bell||1::Desmen Noble||2::Herman Sea...</td>
+      <td>0::Julio Mora||1::Sheldon Smith</td>
       <td>NaN</td>
-      <td>0::Injured, Unharmed, Arrested||1::Unharmed, A...</td>
-      <td>0::Subject-Suspect||1::Subject-Suspect||2::Vic...</td>
-      <td>http://www.morningjournal.com/general-news/201...</td>
-      <td>56.0</td>
-      <td>13.0</td>
-      <td>2013</td>
+      <td>0::Killed||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.timesledger.com/stories/2014/2/firs...</td>
+      <td>33.0</td>
+      <td>14.0</td>
+      <td>2014</td>
       <td>1</td>
       <td>winter</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>478925</td>
-      <td>1/5/13</td>
-      <td>Colorado</td>
-      <td>Aurora</td>
-      <td>16000 block of East Ithaca Place</td>
-      <td>4</td>
+      <td>92142</td>
+      <td>1/1/14</td>
+      <td>New York</td>
+      <td>Brooklyn</td>
+      <td>St. Johns Place</td>
       <td>0</td>
-      <td>http://www.gunviolencearchive.org/incident/478925</td>
-      <td>http://www.dailydemocrat.com/20130106/aurora-s...</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/92142</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
       <td>False</td>
       <td>...</td>
-      <td>0::Stacie Philbrook||1::Christopher Ratliffe||...</td>
       <td>NaN</td>
-      <td>0::Killed||1::Killed||2::Killed||3::Killed</td>
-      <td>0::Victim||1::Victim||2::Victim||3::Subject-Su...</td>
-      <td>http://denver.cbslocal.com/2013/01/06/officer-...</td>
-      <td>40.0</td>
-      <td>28.0</td>
-      <td>2013</td>
+      <td>NaN</td>
+      <td>0::Injured</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.nydailynews.com/new-york/nyc-crime/...</td>
+      <td>43.0</td>
+      <td>20.0</td>
+      <td>2014</td>
       <td>1</td>
       <td>winter</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>478959</td>
-      <td>1/7/13</td>
-      <td>North Carolina</td>
-      <td>Greensboro</td>
-      <td>307 Mourning Dove Terrace</td>
-      <td>2</td>
-      <td>2</td>
-      <td>http://www.gunviolencearchive.org/incident/478959</td>
-      <td>http://www.journalnow.com/news/local/article_d...</td>
+      <td>95261</td>
+      <td>1/1/14</td>
+      <td>Missouri</td>
+      <td>Springfield</td>
+      <td>Beverly Hills and Temple</td>
+      <td>0</td>
+      <td>1</td>
+      <td>http://www.gunviolencearchive.org/incident/95261</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
       <td>False</td>
       <td>...</td>
-      <td>0::Danielle Imani Jameison||1::Maurice Eugene ...</td>
-      <td>3::Family</td>
-      <td>0::Injured||1::Injured||2::Killed||3::Killed</td>
-      <td>0::Victim||1::Victim||2::Victim||3::Subject-Su...</td>
-      <td>http://myfox8.com/2013/01/08/update-mother-sho...</td>
-      <td>62.0</td>
-      <td>27.0</td>
-      <td>2013</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0::Injured||1::Unharmed</td>
+      <td>0::Victim||1::Subject-Suspect</td>
+      <td>http://www.ozarksfirst.com/story/deputies-6-ye...</td>
+      <td>131.0</td>
+      <td>30.0</td>
+      <td>2014</td>
       <td>1</td>
       <td>winter</td>
     </tr>
@@ -3623,7 +4113,7 @@ len(gun_file_season)
 
 
 
-    225875
+    225597
 
 
 
@@ -3640,10 +4130,10 @@ season_incidents
 
 
     Season
-    fall      57520
-    spring    56446
-    summer    60921
-    winter    50988
+    fall      57447
+    spring    56383
+    summer    60828
+    winter    50939
     Name: incident_id, dtype: int64
 
 
@@ -3659,10 +4149,10 @@ season_deaths
 
 
     Season
-    fall      14418
-    spring    13736
-    summer    15289
-    winter    13492
+    fall      14329
+    spring    13665
+    summer    15198
+    winter    13426
     Name: n_killed, dtype: int64
 
 
@@ -3709,23 +4199,23 @@ season_summary
   <tbody>
     <tr>
       <th>fall</th>
-      <td>14418</td>
-      <td>57520</td>
+      <td>14329</td>
+      <td>57447</td>
     </tr>
     <tr>
       <th>spring</th>
-      <td>13736</td>
-      <td>56446</td>
+      <td>13665</td>
+      <td>56383</td>
     </tr>
     <tr>
       <th>summer</th>
-      <td>15289</td>
-      <td>60921</td>
+      <td>15198</td>
+      <td>60828</td>
     </tr>
     <tr>
       <th>winter</th>
-      <td>13492</td>
-      <td>50988</td>
+      <td>13426</td>
+      <td>50939</td>
     </tr>
   </tbody>
 </table>
@@ -3773,26 +4263,26 @@ season_summary.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>14418</td>
-      <td>57520</td>
+      <td>14329</td>
+      <td>57447</td>
       <td>fall</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>13736</td>
-      <td>56446</td>
+      <td>13665</td>
+      <td>56383</td>
       <td>spring</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>15289</td>
-      <td>60921</td>
+      <td>15198</td>
+      <td>60828</td>
       <td>summer</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>13492</td>
-      <td>50988</td>
+      <td>13426</td>
+      <td>50939</td>
       <td>winter</td>
     </tr>
   </tbody>
@@ -3800,6 +4290,17 @@ season_summary.head()
 </div>
 
 
+
+
+```python
+import plotly
+plotly.tools.set_credentials_file(username='pvirgilio', api_key='KdeHIchH9RtyP6zFr6Fh')
+```
+
+
+```python
+import plotly.plotly as py
+```
 
 
 ```python
@@ -3825,58 +4326,11 @@ fig = go.Figure(data=data, layout=layout)
 py.iplot(fig, filename='grouped-bar')
 ```
 
-    Aw, snap! We don't have an account for ''. Want to try again? You can authenticate with your email address or username. Sign in is not case sensitive.
-    
-    Don't have an account? plot.ly
-    
-    Questions? accounts@plot.ly
 
 
 
-    ---------------------------------------------------------------------------
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~pvirgilio/2.embed" height="525px" width="100%"></iframe>
 
-    PlotlyError                               Traceback (most recent call last)
-
-    <ipython-input-156-ec968f2e4700> in <module>()
-         18 
-         19 fig = go.Figure(data=data, layout=layout)
-    ---> 20 py.iplot(fig, filename='grouped-bar')
-    
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/plotly/plotly.py in iplot(figure_or_data, **plot_options)
-        162         embed_options['height'] = str(embed_options['height']) + 'px'
-        163 
-    --> 164     return tools.embed(url, **embed_options)
-        165 
-        166 
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in embed(file_owner_or_url, file_id, width, height)
-        388         else:
-        389             url = file_owner_or_url
-    --> 390         return PlotlyDisplay(url, width, height)
-        391     else:
-        392         if (get_config_defaults()['plotly_domain']
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in __init__(self, url, width, height)
-       1432         def __init__(self, url, width, height):
-       1433             self.resource = url
-    -> 1434             self.embed_code = get_embed(url, width=width, height=height)
-       1435             super(PlotlyDisplay, self).__init__(data=self.embed_code)
-       1436 
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in get_embed(file_owner_or_url, file_id, width, height)
-        293                 "'{1}'."
-        294                 "\nRun help on this function for more information."
-    --> 295                 "".format(url, plotly_rest_url))
-        296         urlsplit = six.moves.urllib.parse.urlparse(url)
-        297         file_owner = urlsplit.path.split('/')[1].split('~')[1]
-
-
-    PlotlyError: Because you didn't supply a 'file_id' in the call, we're assuming you're trying to snag a figure from a url. You supplied the url, '', we expected it to start with 'https://plot.ly'.
-    Run help on this function for more information.
 
 
 
@@ -9296,58 +9750,11 @@ data = [trace]
 py.iplot(data, filename='basic-scatter')
 ```
 
-    Aw, snap! We don't have an account for ''. Want to try again? You can authenticate with your email address or username. Sign in is not case sensitive.
-    
-    Don't have an account? plot.ly
-    
-    Questions? accounts@plot.ly
 
 
 
-    ---------------------------------------------------------------------------
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~pvirgilio/6.embed" height="525px" width="100%"></iframe>
 
-    PlotlyError                               Traceback (most recent call last)
-
-    <ipython-input-208-32046749386c> in <module>()
-         12 
-         13 # Plot and embed in ipython notebook!
-    ---> 14 py.iplot(data, filename='basic-scatter')
-    
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/plotly/plotly.py in iplot(figure_or_data, **plot_options)
-        162         embed_options['height'] = str(embed_options['height']) + 'px'
-        163 
-    --> 164     return tools.embed(url, **embed_options)
-        165 
-        166 
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in embed(file_owner_or_url, file_id, width, height)
-        388         else:
-        389             url = file_owner_or_url
-    --> 390         return PlotlyDisplay(url, width, height)
-        391     else:
-        392         if (get_config_defaults()['plotly_domain']
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in __init__(self, url, width, height)
-       1432         def __init__(self, url, width, height):
-       1433             self.resource = url
-    -> 1434             self.embed_code = get_embed(url, width=width, height=height)
-       1435             super(PlotlyDisplay, self).__init__(data=self.embed_code)
-       1436 
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in get_embed(file_owner_or_url, file_id, width, height)
-        293                 "'{1}'."
-        294                 "\nRun help on this function for more information."
-    --> 295                 "".format(url, plotly_rest_url))
-        296         urlsplit = six.moves.urllib.parse.urlparse(url)
-        297         file_owner = urlsplit.path.split('/')[1].split('~')[1]
-
-
-    PlotlyError: Because you didn't supply a 'file_id' in the call, we're assuming you're trying to snag a figure from a url. You supplied the url, '', we expected it to start with 'https://plot.ly'.
-    Run help on this function for more information.
 
 
 
@@ -9377,7 +9784,7 @@ ax.plot(x_axis, fit, 'blue')
 
 
 
-    [<matplotlib.lines.Line2D at 0x111360ac8>]
+    [<matplotlib.lines.Line2D at 0x112afc588>]
 
 
 
@@ -9413,7 +9820,7 @@ ax.plot(x_axis, fit, 'blue')
 
 
 
-    [<matplotlib.lines.Line2D at 0x1a16faad30>]
+    [<matplotlib.lines.Line2D at 0x10e682710>]
 
 
 
@@ -9423,107 +9830,9 @@ ax.plot(x_axis, fit, 'blue')
 
 
 ```python
-gkey = "AIzaSyCx3T_aTGD4fLG_JJh631UKC3Mo5EetFTc"
+import plotly
+plotly.tools.set_credentials_file(username='pvirgilio', api_key='KdeHIchH9RtyP6zFr6Fh')
 ```
-
-
-```python
-gmaps.configure(api_key=gkey) # Fill in with your API key
-fig = gmaps.figure()
-fig
-```
-
-
-<p>Failed to display Jupyter Widget of type <code>Figure</code>.</p>
-<p>
-  If you're reading this message in the Jupyter Notebook or JupyterLab Notebook, it may mean
-  that the widgets JavaScript is still loading. If this message persists, it
-  likely means that the widgets JavaScript library is either not installed or
-  not enabled. See the <a href="https://ipywidgets.readthedocs.io/en/stable/user_install.html">Jupyter
-  Widgets Documentation</a> for setup instructions.
-</p>
-<p>
-  If you're reading this message in another frontend (for example, a static
-  rendering on GitHub or <a href="https://nbviewer.jupyter.org/">NBViewer</a>),
-  it may mean that your frontend doesn't currently support widgets.
-</p>
-
-
-
-
-```python
-#build a heatmap layer showing the number of deaths per state:
-
-fig = gmaps.figure(map_type='HYBRID', center=(37.7, -97.3),zoom_level=4)
-
-
-heatmap_layer = gmaps.heatmap_layer(plotly_gun_df[["lat (N)", "lng (W)"]], weights=plotly_gun_df["Norm Deaths"], max_intensity=80, point_radius=20)
-fig.add_layer(heatmap_layer)
-fig
-```
-
-
-<p>Failed to display Jupyter Widget of type <code>Figure</code>.</p>
-<p>
-  If you're reading this message in the Jupyter Notebook or JupyterLab Notebook, it may mean
-  that the widgets JavaScript is still loading. If this message persists, it
-  likely means that the widgets JavaScript library is either not installed or
-  not enabled. See the <a href="https://ipywidgets.readthedocs.io/en/stable/user_install.html">Jupyter
-  Widgets Documentation</a> for setup instructions.
-</p>
-<p>
-  If you're reading this message in another frontend (for example, a static
-  rendering on GitHub or <a href="https://nbviewer.jupyter.org/">NBViewer</a>),
-  it may mean that your frontend doesn't currently support widgets.
-</p>
-
-
-
-
-```python
-#build a heatmap layer showing the number of deaths per state:
-
-fig = gmaps.figure(center=(37.7, -97.3),zoom_level=4)
-
-
-heatmap_layer = gmaps.heatmap_layer(plotly_gun_df[["lat (N)", "lng (W)"]], weights=plotly_gun_df["Norm Incidents"], max_intensity=80, point_radius=12)
-fig.add_layer(heatmap_layer)
-fig
-```
-
-
-<p>Failed to display Jupyter Widget of type <code>Figure</code>.</p>
-<p>
-  If you're reading this message in the Jupyter Notebook or JupyterLab Notebook, it may mean
-  that the widgets JavaScript is still loading. If this message persists, it
-  likely means that the widgets JavaScript library is either not installed or
-  not enabled. See the <a href="https://ipywidgets.readthedocs.io/en/stable/user_install.html">Jupyter
-  Widgets Documentation</a> for setup instructions.
-</p>
-<p>
-  If you're reading this message in another frontend (for example, a static
-  rendering on GitHub or <a href="https://nbviewer.jupyter.org/">NBViewer</a>),
-  it may mean that your frontend doesn't currently support widgets.
-</p>
-
-
-
-
-```python
-py.tools.set_credentials_file(username='pvirgilio', api_key='KdeHIchH9RtyP6zFr6Fh')
-```
-
-
-    ---------------------------------------------------------------------------
-
-    AttributeError                            Traceback (most recent call last)
-
-    <ipython-input-217-7895fb066538> in <module>()
-    ----> 1 py.tools.set_credentials_file(username='pvirgilio', api_key='KdeHIchH9RtyP6zFr6Fh')
-    
-
-    AttributeError: module 'plotly.plotly' has no attribute 'tools'
-
 
 
 ```python
@@ -9601,58 +9910,14 @@ py.iplot( fig, filename='d3-cloropleth-map' )
     
 
 
-    Aw, snap! We don't have an account for ''. Want to try again? You can authenticate with your email address or username. Sign in is not case sensitive.
-    
-    Don't have an account? plot.ly
-    
-    Questions? accounts@plot.ly
+    High five! You successfully sent some data to your account on plotly. View your plot in your browser at https://plot.ly/~pvirgilio/0 or inside your plot.ly account where it is named 'd3-cloropleth-map'
 
 
 
-    ---------------------------------------------------------------------------
-
-    PlotlyError                               Traceback (most recent call last)
-
-    <ipython-input-220-7c94859d8a01> in <module>()
-         36 
-         37 fig = dict( data=data, layout=layout )
-    ---> 38 py.iplot( fig, filename='d3-cloropleth-map' )
-    
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/plotly/plotly.py in iplot(figure_or_data, **plot_options)
-        162         embed_options['height'] = str(embed_options['height']) + 'px'
-        163 
-    --> 164     return tools.embed(url, **embed_options)
-        165 
-        166 
 
 
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in embed(file_owner_or_url, file_id, width, height)
-        388         else:
-        389             url = file_owner_or_url
-    --> 390         return PlotlyDisplay(url, width, height)
-        391     else:
-        392         if (get_config_defaults()['plotly_domain']
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~pvirgilio/0.embed" height="525px" width="100%"></iframe>
 
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in __init__(self, url, width, height)
-       1432         def __init__(self, url, width, height):
-       1433             self.resource = url
-    -> 1434             self.embed_code = get_embed(url, width=width, height=height)
-       1435             super(PlotlyDisplay, self).__init__(data=self.embed_code)
-       1436 
-
-
-    /anaconda3/envs/PythonData1/lib/python3.6/site-packages/plotly/tools.py in get_embed(file_owner_or_url, file_id, width, height)
-        293                 "'{1}'."
-        294                 "\nRun help on this function for more information."
-    --> 295                 "".format(url, plotly_rest_url))
-        296         urlsplit = six.moves.urllib.parse.urlparse(url)
-        297         file_owner = urlsplit.path.split('/')[1].split('~')[1]
-
-
-    PlotlyError: Because you didn't supply a 'file_id' in the call, we're assuming you're trying to snag a figure from a url. You supplied the url, '', we expected it to start with 'https://plot.ly'.
-    Run help on this function for more information.
 
 
 
@@ -9689,7 +9954,7 @@ fig.savefig("UnemploymentRate.png")
 ```
 
 
-![png](output_81_0.png)
+![png](output_77_0.png)
 
 
 
@@ -9721,7 +9986,7 @@ fig.savefig("MentalHealth.png")
 ```
 
 
-![png](output_82_0.png)
+![png](output_78_0.png)
 
 
 
@@ -9753,7 +10018,7 @@ fig.savefig("Populationper100K.png")
 ```
 
 
-![png](output_83_0.png)
+![png](output_79_0.png)
 
 
 
@@ -9786,7 +10051,7 @@ fig.savefig("GunLawStrengthRank.png")
 ```
 
 
-![png](output_84_0.png)
+![png](output_80_0.png)
 
 
 
@@ -9818,7 +10083,7 @@ fig.savefig("MentalHealthSpendingperCapita.png")
 ```
 
 
-![png](output_85_0.png)
+![png](output_81_0.png)
 
 
 
@@ -9850,7 +10115,7 @@ fig.savefig("EducationSpendingperPupil.png")
 ```
 
 
-![png](output_86_0.png)
+![png](output_82_0.png)
 
 
 
@@ -9882,7 +10147,7 @@ fig.savefig("GunDeathRateRank.png")
 ```
 
 
-![png](output_87_0.png)
+![png](output_83_0.png)
 
 
 
@@ -9998,7 +10263,7 @@ fig.savefig("TotalNumberGunLaws.png")
 ```
 
 
-![png](output_89_0.png)
+![png](output_85_0.png)
 
 
 
@@ -10030,7 +10295,7 @@ fig.savefig("PovertyRank.png")
 ```
 
 
-![png](output_90_0.png)
+![png](output_86_0.png)
 
 
 
@@ -10062,7 +10327,7 @@ fig.savefig("MedianAge.png")
 ```
 
 
-![png](output_91_0.png)
+![png](output_87_0.png)
 
 
 
@@ -10094,7 +10359,7 @@ fig.savefig("Income.png")
 ```
 
 
-![png](output_92_0.png)
+![png](output_88_0.png)
 
 
 
@@ -10375,7 +10640,7 @@ fig.savefig("GunOwnershipPercentage.png")
 ```
 
 
-![png](output_96_0.png)
+![png](output_92_0.png)
 
 
 
@@ -10656,7 +10921,7 @@ fig.savefig("PoliceExpenditure.png")
 ```
 
 
-![png](output_100_0.png)
+![png](output_96_0.png)
 
 
 
@@ -10704,7 +10969,7 @@ plt.savefig("Grade_Incidents")
 ```
 
 
-![png](output_103_0.png)
+![png](output_99_0.png)
 
 
 
@@ -10722,5 +10987,5 @@ plt.savefig("Grade_Deaths")
 ```
 
 
-![png](output_104_0.png)
+![png](output_100_0.png)
 
